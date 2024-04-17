@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/ArticleSection.css"
 import Button from "./Button";
+import Blur from "./Blur";
 import CardsContainer from "./CardsContainer";
 import Searchbar from "./Searchbar";
 import RegularCard from "./RegularCard";

@@ -1,4 +1,5 @@
 import "../styles/Navbar.css"
+import Button from "./Button";
 
 const Navbar = () => {
   return (
@@ -9,7 +10,7 @@ const Navbar = () => {
         <a href="#">Articles</a>
         <a href="#">News</a>
       </div>
-      <button variant="primary">Subscribe</button>
+      <Button variant="primary">Subscribe</Button>
     </nav>
   );
 };

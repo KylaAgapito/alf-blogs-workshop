@@ -1,8 +1,11 @@
 import "../styles/Hero.css"
+import Button from "./Button";
+import Blur from "./Blur";
 
 const Hero = () => {
   return (
-    <div className="hero-main" id="heroSection
+
+    <div className="hero-main" id="heroSection">
        <Blur
         h={"45%"}
         w={"50%"}
@@ -15,6 +18,7 @@ const Hero = () => {
         translate_y={"-50%"}
         border_radius={"100%"}
       />
+
       <Blur
         h={"45%"}
         w={"50%"}
@@ -27,6 +31,7 @@ const Hero = () => {
         translate_y={"-50%"}
         border_radius={"100%"}
       />
+
       <Blur
         h={"120%"}
         w={"65%"}
@@ -40,7 +45,6 @@ const Hero = () => {
         border_radius={"100%"}
       />
 
-    
       {/* hero content */}
       <div className="hero-text-content">
         <p className="top-text">AWSCC PUP Manila - DSWD</p>
@@ -50,9 +54,9 @@ const Hero = () => {
         </p>
         <p className="bottom-text">Learn more about AWS, cloud computing, and anything you want!</p>
         <a href="#articleSection">
-          <button variant ={"outlined"} size={"md"}>
+          <Button variant ={"outlined"} size={"md"}>
             Explore
-          </button>
+          </Button>
         </a>
       </div>
 
