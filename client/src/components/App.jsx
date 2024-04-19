@@ -1,19 +1,37 @@
-import ArticleSection from "./ArticleSection";
-import Footer from "./Footer";
-import Hero from "./Hero";
-import Navbar from "./Navbar";
-import CtaSection from "./CtaSection";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+import EditorProvider from "../contexts/EditorProvider";
+import Article, { articleLoader } from "../routes/Article";
+import Home from "../routes/Home";
+import Root from "../routes/Root";
+import { articleCreateAction, articlesLoader } from "./ArticleSection";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    action: articleCreateAction,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+        loader: articlesLoader,
+      },
+      {
+        path: "/article/:articleId",
+        element: <Article />,
+        loader: articleLoader,
+      },
+    ],
+  },
+]);
 
 const App = () => {
-   return (
-    <div className="wrapper">
-       <Navbar />
-       <Hero />
-       <ArticleSection />
-       <CtaSection />
-       <Footer />
-    </div>
-   );
+  return (
+    <EditorProvider>
+      <RouterProvider router={router} />
+    </EditorProvider>
+  );
 };
 
 export default App;

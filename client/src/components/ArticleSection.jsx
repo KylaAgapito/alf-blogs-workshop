@@ -1,25 +1,47 @@
-import { useEffect, useState } from "react";
-import "../styles/ArticleSection.css"
-import Button from "./Button";
+import React, { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import "../styles/ArticleSection.css";
 import Blur from "./Blur";
+import Button from "./Button";
 import CardsContainer from "./CardsContainer";
-import Searchbar from "./Searchbar";
+import FormModal from "./FormModal";
 import RegularCard from "./RegularCard";
+import Searchbar from "./Searchbar";
 import { API_URL } from "../constants";
 
-const cards = [
-  {_id: 1, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", date: Date.now(), cover_photo: "/preview.png", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-  {_id: 2, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", date: Date.now(), cover_photo: "/preview.png", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-  {_id: 3, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", date: Date.now(), cover_photo: "/preview.png", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-  {_id: 4, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", date: Date.now(), cover_photo: "/preview.png", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-  {_id: 5, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", date: Date.now(), cover_photo: "/preview.png", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-];
+export const articlesLoader = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/posts`);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
+};
+
+export const articleCreateAction = async ({ request }) => {
+  const formData = await request.formData();
+  const newFormData = new FormData();
+  newFormData.append("title", formData.get("title"));
+  newFormData.append("author", formData.get("author"));
+  newFormData.append("cover_photo", formData.get("cover_photo"));
+  newFormData.append("content", localStorage.getItem("content"));
+
+  const response = await fetch(`${API_URL}/posts`, {
+    method: "POST",
+    body: newFormData,
+  });
+
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return redirect(`/article/${data._id}`);
+};
 
 const ArticleSection = () => {
-
   const [searchText, setSearchText] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [cards, setCards] = useState([]);
+  const cards = useLoaderData();
 
   const isCardMatch = (val, card) => {
     const titleMatch = card.title.toLowerCase().includes(val.toLowerCase().trim());
@@ -27,12 +49,12 @@ const ArticleSection = () => {
   };
 
   const handleCardSearch = (value) => {
-    const cardsMatched = []
+    const cardsMatched = [];
 
     setSearchText(value);
     cards.forEach((card) => {
       if (isCardMatch(value, card)) {
-        cardsMatched.push(<RegularCard key={card._id} {...card} />)
+        cardsMatched.push(<RegularCard key={card._id} {...card} />);
       }
     });
 
@@ -41,24 +63,11 @@ const ArticleSection = () => {
 
   useEffect(() => {
     handleCardSearch(searchText);
-    
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${API_URL}/posts`)
-        const data = await response.json();
-        setCards(data);
-      } catch (error) {
-        console.error(error);
-      } 
-    };
-
-    fetchData();
-
   }, []);
 
   return (
     <div id="articleSection">
-        <Blur
+      <Blur
         h={"60%"}
         w={"45%"}
         bg={"#7000FF"}
@@ -82,17 +91,26 @@ const ArticleSection = () => {
         translate_y={"-50%"}
         border_radius={"100%"}
       />
+
       <div className="article-sec-heading-container">
         <p className="article-sec-heading">Learn About Everything Tech!</p>
         <p className="article-sec-subheading">brought to you by AWSCC Department of Software and Web Development</p>
       </div>
-      {cards.length > 0 && 
-      <div className="article-top-container">
-        <Button variant={"primary"}>Create Article</Button>
-        <Searchbar searchText={searchText} setSearchText={handleCardSearch} />
-      </div>
-      }
-      <CardsContainer isEmpty={cards.length === 0} filterResult={searchResult} searchText={searchText}/>
+
+      {cards.length > 0 && (
+        <div className="article-top-container">
+          <FormModal>
+            {(toggleModal) => (
+              <Button variant="primary" onClick={toggleModal}>
+                Create Article
+              </Button>
+            )}
+          </FormModal>
+          <Searchbar searchText={searchText} onSearchChange={handleCardSearch} />
+        </div>
+      )}
+
+      <CardsContainer isEmpty={cards.length === 0} filterResult={searchResult} searchText={searchText} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import "../styles/CardsContainer.css"
 import Button from "./Button";
 import MainCard from "./MainCard";
-import RegularCard from "./RegularCard";
+// import RegularCard from "./RegularCard";
 
 const CardsContainer = ( { isEmpty, filterResult, searchText } ) => {
   return (
